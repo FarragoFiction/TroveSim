@@ -21,6 +21,8 @@
 // The function gets called when the window is fully loaded
 window.onload = function() {
     // Get the canvas and context
+    const gigglesnort = document.getElementById("gigglesnort");
+
     const blank = document.getElementById("blank");
     const balloon = document.getElementById("balloon");
     const clover = document.getElementById("clover");
@@ -34,7 +36,8 @@ window.onload = function() {
 
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
-    
+
+    var currentTrove;
     // Timing and frames per second
     var lastframe = 0;
     var fpstime = 0;
@@ -444,6 +447,7 @@ window.onload = function() {
     
     // Render moves
     function renderMoves() {
+        gigglesnort.innerHTML = "";
         for (var i=0; i<moves.length; i++) {
             // Calculate coordinates of tile 1 and 2
             var coord1 = getTileCoordinate(moves[i].column1, moves[i].row1, 0, 0);
@@ -527,9 +531,39 @@ window.onload = function() {
             findClusters();
         }
     }
-    
+
+    function findClusters(){
+        //verticals aren't troves, you filthy casual
+        return findHorizontalClusters();
+
+    }
+
+    function findHorizontalClusters(){
+        clusters = []
+        // clusters.push({ matchType: matchType, column: i+1-matchlength, row:j,
+                                   //               length: matchlength, horizontal: true });
+        for (var j=0; j<level.rows; j++) {
+            // Start with a single tile, cluster of 1
+            var currentSet = [];
+            var matchlength = 1;
+            for (var i=0; i<level.columns; i++) {
+                const currentTile = tileTypes[level.tiles[i][j].type];
+                if(currentSet.includes(currentTile)){
+                const matchLength = currentSet.length;
+                    if(currentSet.length >=3){
+                        clusters.push({currentSet: currentSet, column: i+1-matchlength, row:j, length: matchlength, horizontal: true  });
+                    }
+                    currentSet = [];
+                }else{
+                    currentSet.push(currentTile);
+                }
+            }
+        }
+        return clusters;
+    }
+
     // Find clusters in the level
-    function findClusters() {
+    function findClustersOld() {
         // Reset clusters
         clusters = []
         
@@ -549,21 +583,21 @@ window.onload = function() {
                     if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
                         level.tiles[i][j].type != -1) {
                         // Same type as the previous tile, increase matchlength
-                        matchlength += 1;
+                        //matchlength += 1;
                         //checkcluster = true;
 
                     } else {
                         // Different type
                         checkcluster = true;
-                        //matchlength += 1;
+                        matchlength += 1;
                     }
                 }
                 
                 // Check if there was a cluster
                 if (checkcluster) {
-                    if (matchlength == 1) {
+                    if (matchlength >=3) {
                         // Found a horizontal cluster
-                        clusters.push({ column: i+1-matchlength, row:j,
+                        clusters.push({column: i+1-matchlength, row:j,
                                         length: matchlength, horizontal: true });
                     }
                     
@@ -596,7 +630,7 @@ window.onload = function() {
                 
                 // Check if there was a cluster
                 if (checkcluster) {
-                    if (matchlength >= 3) {
+                    if (matchlength == 1) {
                         // Found a vertical cluster
                         clusters.push({ column: i, row:j+1-matchlength,
                                         length: matchlength, horizontal: false });
@@ -624,7 +658,7 @@ window.onload = function() {
                 // Check if the swap made a cluster
                 if (clusters.length > 0) {
                     // Found a move
-                    moves.push({column1: i, row1: j, column2: i+1, row2: j});
+                    moves.push({clusters: clusters.slice(0), column1: i, row1: j, column2: i+1, row2: j});
                 }
             }
         }
@@ -640,11 +674,11 @@ window.onload = function() {
                 // Check if the swap made a cluster
                 if (clusters.length > 0) {
                     // Found a move
-                    moves.push({column1: i, row1: j, column2: i, row2: j+1});
+                    moves.push({clusters: clusters.slice(0), column1: i, row1: j, column2: i, row2: j+1});
                 }
             }
         }
-        
+
         // Reset clusters
         clusters = []
     }
@@ -671,7 +705,12 @@ window.onload = function() {
     // Remove the clusters
     function removeClusters() {
         // Change the type of the tiles to -1, indicating a removed tile
-        loopClusters(function(index, column, row, cluster) { level.tiles[column][row].type = -1; });
+        currentTrove = [];
+        gigglesnort.innerHTML = "Current Trove: ";
+        loopClusters(function(index, column, row, cluster) {
+            currentTrove.push(tileTypes[level.tiles[column][row].type]);
+            level.tiles[column][row].type = -1;
+         });
 
         // Calculate how much a tile should be shifted downwards
         for (var i=0; i<level.columns; i++) {
@@ -687,6 +726,13 @@ window.onload = function() {
                     level.tiles[i][j].shift = shift;
                 }
             }
+        }
+
+        for(var i = 0; i< currentTrove.length; i++){
+            const troveImage = currentTrove[i];
+            var newImage = document.createElement("img");
+            newImage.setAttribute('src', troveImage.src);
+            gigglesnort.appendChild(newImage);
         }
     }
     
