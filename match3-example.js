@@ -374,7 +374,7 @@ window.onload = function() {
                 if (level.selectedtile.selected) {
                     if (level.selectedtile.column == i && level.selectedtile.row == j) {
                         // Draw a red tile
-                        drawTile(coord.tilex, coord.tiley, 255, 0, 0);
+                        drawBox(coord.tilex, coord.tiley, 255, 0, 0);
                     }
                 }
             }
@@ -397,18 +397,18 @@ window.onload = function() {
             var col2 = tileTypes[level.tiles[currentmove.column2][currentmove.row2].type];
             
             // Draw a black background
-            drawTile(coord1.tilex, coord1.tiley, 0);
-            drawTile(coord2.tilex, coord2.tiley, 0);
+            drawBox(coord1.tilex, coord1.tiley, 0,0,0);
+            drawBox(coord2.tilex, coord2.tiley, 0,0,0);
             
             // Change the order, depending on the animation state
             if (animationstate == 2) {
                 // Draw the tiles
-                drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
-                drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
+                drawTile(coord1shift.tilex, coord1shift.tiley, col1);
+                drawTile(coord2shift.tilex, coord2shift.tiley, col2);
             } else {
                 // Draw the tiles
-                drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
-                drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
+                drawTile(coord2shift.tilex, coord2shift.tiley, col2);
+                drawTile(coord1shift.tilex, coord1shift.tiley, col1);
             }
         }
     }
@@ -426,6 +426,11 @@ window.onload = function() {
         //context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
         //context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
     }
+
+     function drawBox(x, y, tile,r,g,b) {
+            context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+            context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
+        }
     
     // Render clusters
     function renderClusters() {
@@ -532,7 +537,7 @@ window.onload = function() {
         }
     }
 
-    function findClusters(){
+    function findClustersNew(){
         //verticals aren't troves, you filthy casual
         return findHorizontalClusters();
 
@@ -548,8 +553,9 @@ window.onload = function() {
             var matchlength = 1;
             for (var i=0; i<level.columns; i++) {
                 const currentTile = tileTypes[level.tiles[i][j].type];
-                if(currentSet.includes(currentTile)){
-                const matchLength = currentSet.length;
+                if(currentSet.includes(currentTile) && i == level.columns-1){
+                    const matchLength = currentSet.length;
+                    //console.log("match length is: ", matchLength); this always prints out 7 this is wrong, but if i do || the end it infinite loops because i'm an idiot
                     if(currentSet.length >=3){
                         clusters.push({currentSet: currentSet, column: i+1-matchlength, row:j, length: matchlength, horizontal: true  });
                     }
@@ -563,7 +569,7 @@ window.onload = function() {
     }
 
     // Find clusters in the level
-    function findClustersOld() {
+    function findClusters() {
         // Reset clusters
         clusters = []
         
