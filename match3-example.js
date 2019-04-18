@@ -21,6 +21,17 @@
 // The function gets called when the window is fully loaded
 window.onload = function() {
     // Get the canvas and context
+    const blank = document.getElementById("blank");
+    const balloon = document.getElementById("balloon");
+    const clover = document.getElementById("clover");
+    const diamond = document.getElementById("diamond");
+    const heart = document.getElementById("heart");
+    const horseshoe = document.getElementById("horseshoe");
+    const moon = document.getElementById("moon");
+    const potofgold = document.getElementById("potofgold");
+    const rainbow = document.getElementById("rainbow");
+    const star = document.getElementById("star");
+
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
     
@@ -45,15 +56,8 @@ window.onload = function() {
         selectedtile: { selected: false, column: 0, row: 0 }
     };
     
-    // All of the different tile colors in RGB
-    var tilecolors = [[255, 128, 128],
-                      [128, 255, 128],
-                      [128, 128, 255],
-                      [255, 255, 128],
-                      [255, 128, 255],
-                      [128, 255, 255],
-                      [255, 255, 255]];
-    
+    var tileTypes = [balloon, clover, diamond, heart, horseshoe, moon, potofgold, rainbow, star];
+
     // Clusters and moves that were found
     var clusters = [];  // { column, row, length, horizontal }
     var moves = [];     // { column1, row1, column2, row2 }
@@ -357,10 +361,10 @@ window.onload = function() {
                 // Check if there is a tile present
                 if (level.tiles[i][j].type >= 0) {
                     // Get the color of the tile
-                    var col = tilecolors[level.tiles[i][j].type];
+                    var col = tileTypes[level.tiles[i][j].type];
                     
                     // Draw the tile using the color
-                    drawTile(coord.tilex, coord.tiley, col[0], col[1], col[2]);
+                    drawTile(coord.tilex, coord.tiley, col);
                 }
                 
                 // Draw the selected tile
@@ -382,16 +386,16 @@ window.onload = function() {
             // First tile
             var coord1 = getTileCoordinate(currentmove.column1, currentmove.row1, 0, 0);
             var coord1shift = getTileCoordinate(currentmove.column1, currentmove.row1, (animationtime / animationtimetotal) * shiftx, (animationtime / animationtimetotal) * shifty);
-            var col1 = tilecolors[level.tiles[currentmove.column1][currentmove.row1].type];
+            var col1 = tileTypes[level.tiles[currentmove.column1][currentmove.row1].type];
             
             // Second tile
             var coord2 = getTileCoordinate(currentmove.column2, currentmove.row2, 0, 0);
             var coord2shift = getTileCoordinate(currentmove.column2, currentmove.row2, (animationtime / animationtimetotal) * -shiftx, (animationtime / animationtimetotal) * -shifty);
-            var col2 = tilecolors[level.tiles[currentmove.column2][currentmove.row2].type];
+            var col2 = tileTypes[level.tiles[currentmove.column2][currentmove.row2].type];
             
             // Draw a black background
-            drawTile(coord1.tilex, coord1.tiley, 0, 0, 0);
-            drawTile(coord2.tilex, coord2.tiley, 0, 0, 0);
+            drawTile(coord1.tilex, coord1.tiley, 0);
+            drawTile(coord2.tilex, coord2.tiley, 0);
             
             // Change the order, depending on the animation state
             if (animationstate == 2) {
@@ -414,9 +418,10 @@ window.onload = function() {
     }
     
     // Draw a tile with a color
-    function drawTile(x, y, r, g, b) {
-        context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-        context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
+    function drawTile(x, y, tile) {
+        context.drawImage(tile, x+2, y+2, level.tilewidth -4, level.tileheight -4);
+        //context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        //context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
     }
     
     // Render clusters
@@ -501,7 +506,7 @@ window.onload = function() {
     
     // Get a random tile
     function getRandomTile() {
-        return Math.floor(Math.random() * tilecolors.length);
+        return Math.floor(Math.random() * tileTypes.length);
     }
     
     // Remove clusters and insert tiles
@@ -540,19 +545,23 @@ window.onload = function() {
                     checkcluster = true;
                 } else {
                     // Check the type of the next tile
+                    //jr hack is that everything BUT things that match should hit
                     if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
                         level.tiles[i][j].type != -1) {
                         // Same type as the previous tile, increase matchlength
                         matchlength += 1;
+                        //checkcluster = true;
+
                     } else {
                         // Different type
                         checkcluster = true;
+                        //matchlength += 1;
                     }
                 }
                 
                 // Check if there was a cluster
                 if (checkcluster) {
-                    if (matchlength >= 3) {
+                    if (matchlength == 1) {
                         // Found a horizontal cluster
                         clusters.push({ column: i+1-matchlength, row:j,
                                         length: matchlength, horizontal: true });
