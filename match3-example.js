@@ -553,7 +553,8 @@ window.onload = function() {
             var matchlength = 1;
             for (var i=0; i<level.columns; i++) {
                 const currentTile = tileTypes[level.tiles[i][j].type];
-                if(currentSet.includes(currentTile) && i == level.columns-1){
+                console.log("current tile is ", currentTile, "and currentSet is ", currentSet, "is tile in the set? ", currentSet.includes(currentTile));
+                if(currentSet.includes(currentTile)){
                     const matchLength = currentSet.length;
                     //console.log("match length is: ", matchLength); this always prints out 7 this is wrong, but if i do || the end it infinite loops because i'm an idiot
                     if(currentSet.length >=3){
@@ -568,85 +569,85 @@ window.onload = function() {
         return clusters;
     }
 
-    // Find clusters in the level
-    function findClusters() {
-        // Reset clusters
-        clusters = []
-        
-        // Find horizontal clusters
-        for (var j=0; j<level.rows; j++) {
-            // Start with a single tile, cluster of 1
-            var matchlength = 1;
-            for (var i=0; i<level.columns; i++) {
-                var checkcluster = false;
-                
-                if (i == level.columns-1) {
-                    // Last tile
-                    checkcluster = true;
-                } else {
-                    // Check the type of the next tile
-                    //jr hack is that everything BUT things that match should hit
-                    if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
-                        level.tiles[i][j].type != -1) {
-                        // Same type as the previous tile, increase matchlength
-                        //matchlength += 1;
-                        //checkcluster = true;
+ // Find clusters in the level
+     function findClusters() {
+         // Reset clusters
+         clusters = []
 
-                    } else {
-                        // Different type
-                        checkcluster = true;
-                        matchlength += 1;
-                    }
-                }
-                
-                // Check if there was a cluster
-                if (checkcluster) {
-                    if (matchlength >=3) {
-                        // Found a horizontal cluster
-                        clusters.push({column: i+1-matchlength, row:j,
-                                        length: matchlength, horizontal: true });
-                    }
-                    
-                    matchlength = 1;
-                }
-            }
-        }
+         // Find horizontal clusters
+         for (var j=0; j<level.rows; j++) {
+             // Start with a single tile, cluster of 1
+             var matchlength = 1;
+             for (var i=0; i<level.columns; i++) {
+                 var checkcluster = false;
 
-        // Find vertical clusters
-        for (var i=0; i<level.columns; i++) {
-            // Start with a single tile, cluster of 1
-            var matchlength = 1;
-            for (var j=0; j<level.rows; j++) {
-                var checkcluster = false;
-                
-                if (j == level.rows-1) {
-                    // Last tile
-                    checkcluster = true;
-                } else {
-                    // Check the type of the next tile
-                    if (level.tiles[i][j].type == level.tiles[i][j+1].type &&
-                        level.tiles[i][j].type != -1) {
-                        // Same type as the previous tile, increase matchlength
-                        matchlength += 1;
-                    } else {
-                        // Different type
-                        checkcluster = true;
-                    }
-                }
-                
-                // Check if there was a cluster
-                if (checkcluster) {
-                    if (matchlength == 1) {
-                        // Found a vertical cluster
-                        clusters.push({ column: i, row:j+1-matchlength,
-                                        length: matchlength, horizontal: false });
-                    }
-                    
-                    matchlength = 1;
-                }
-            }
-        }
-    }
+                 if (i == level.columns-1) {
+                     // Last tile
+                     checkcluster = true;
+                 } else {
+                     // Check the type of the next tile
+                     //jr hack is that everything BUT things that match should hit
+                     if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
+                         level.tiles[i][j].type != -1) {
+                         // Same type as the previous tile, increase matchlength
+                         //matchlength += 1;
+                         //checkcluster = true;
+
+                     } else {
+                         // Different type
+                         checkcluster = true;
+                         matchlength += 1;
+                     }
+                 }
+
+                 // Check if there was a cluster
+                 if (checkcluster) {
+                     if (matchlength >=3) {
+                         // Found a horizontal cluster
+                         clusters.push({column: i+1-matchlength, row:j,
+                                         length: matchlength, horizontal: true });
+                     }
+
+                     matchlength = 1;
+                 }
+             }
+         }
+
+         // Find vertical clusters
+         for (var i=0; i<level.columns; i++) {
+             // Start with a single tile, cluster of 1
+             var matchlength = 1;
+             for (var j=0; j<level.rows; j++) {
+                 var checkcluster = false;
+
+                 if (j == level.rows-1) {
+                     // Last tile
+                     checkcluster = true;
+                 } else {
+                     // Check the type of the next tile
+                     if (level.tiles[i][j].type == level.tiles[i][j+1].type &&
+                         level.tiles[i][j].type != -1) {
+                         // Same type as the previous tile, increase matchlength
+                         matchlength += 1;
+                     } else {
+                         // Different type
+                         checkcluster = true;
+                     }
+                 }
+
+                 // Check if there was a cluster
+                 if (checkcluster) {
+                     if (matchlength == 1) {
+                         // Found a vertical cluster
+                         clusters.push({ column: i, row:j+1-matchlength,
+                                         length: matchlength, horizontal: false });
+                     }
+
+                     matchlength = 1;
+                 }
+             }
+         }
+     }
     
     // Find available moves
     function findMoves() {

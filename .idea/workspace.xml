@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="44457e78-bbb7-4435-9e4f-f286c2525e8b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/match3-example.js" beforeDir="false" afterPath="$PROJECT_DIR$/match3-example.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +24,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/match3-example.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="539" column="28" selection-start-line="539" selection-start-column="28" selection-end-line="539" selection-end-column="28" />
+            <state relative-caret-position="733">
+              <caret line="649" column="6" selection-start-line="649" selection-start-column="6" selection-end-line="649" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -68,6 +67,7 @@
       <find>currenttr</find>
       <find>function findClusters</find>
       <find>drawTile</find>
+      <find>new</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -216,8 +216,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/match3-example.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="539" column="28" selection-start-line="539" selection-start-column="28" selection-end-line="539" selection-end-column="28" />
+        <state relative-caret-position="733">
+          <caret line="649" column="6" selection-start-line="649" selection-start-column="6" selection-end-line="649" selection-end-column="6" />
         </state>
       </provider>
     </entry>
