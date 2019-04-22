@@ -17,6 +17,50 @@
 //
 // http://rembound.com/articles/how-to-make-a-match3-game-with-html5-canvas
 // ------------------------------------------------------------------------
+Math.seed = getRandomSeed();  //can be overwritten on load
+var initial_seed = Math.seed;
+
+function convertSentenceToNumber(sentence) {
+  var ret = 0;
+  for(var i =0; i<sentence.length; i++) {
+    const s = sentence.charCodeAt(i);
+    ret += s;
+  }
+  return ret;
+}
+
+function getRandomSeed() {
+	//console.log("getting a random seed, probably to reinit the seed")
+	var min = 0;
+	var max = 413*612*1025;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+////https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use if i want to have more possible sessions, use 2^32 or 2^64. see wiki
+//have modulus be 2^32 (4294967296), a = 1664525, c = 1013904223
+Math.seededRandom = function(max, min){
+	/*random_number = (lcg.previous * a + c) % modulus
+    lcg.previous = random_number
+    return random_number
+	*/
+	max = max || 1;
+    min = min || 0;
+	Math.seed = (Math.seed * 1664525 + 1013904223) % 4294967296;
+    var rnd = Math.seed / 4294967296;
+
+    return min + rnd * (max - min);
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.seededRandom() * (max - min + 1)) + min;
+}
+
+function getRandomElementFromArray(array){
+	var min = 0;
+	var max = array.length-1;
+	var i = Math.floor(Math.seededRandom() * (max - min + 1)) + min;
+	return array[i];
+}
 
 // The function gets called when the window is fully loaded
 window.onload = function() {
@@ -735,12 +779,17 @@ window.onload = function() {
             }
         }
 
+        Math.seed = 0
         for(var i = 0; i< currentTrove.length; i++){
             const troveImage = currentTrove[i];
             var newImage = document.createElement("img");
             newImage.setAttribute('src', troveImage.src);
+            Math.seed += convertSentenceToNumber(troveImage.src);
+            console.log("seed is ", Math.seed);
             gigglesnort.appendChild(newImage);
         }
+        gigglesnort.innerHTML += "<Br><h2>" + getRandomElementFromArray(bullshit) +"</h2>";
+
     }
     
     // Shift tiles and insert new tiles
@@ -928,3 +977,159 @@ window.onload = function() {
     // Call init to start the game
     init();
 };
+
+
+const bullshit = ["Lizards are reptiles.",
+                  "Some lizards can detach their tails if caught by predators.",
+                  "The upper and lower eyelids of chameleons are joined, leaving just a small hole for them to see through. They can move their eyes independently however, allowing them to look in two different directions at the same time.",
+                  "Chameleons have long tongues which they rapidly extend from their mouth, too fast for human eyes to see properly.",
+                  "Chameleons generally eat insects.",
+                  "Some chameleons have the ability to change color. This helps them communicate with each other and can also be used for camouflage.",
+                  "Geckos have no eyelids.",
+                  "Geckos have unique toes which allow them to be good climbers.",
+                  "Iguanas have a row of spines which run down their back and tail.",
+                  "Green iguanas are popular pets.",
+                  "The Komodo dragon is the largest type of lizard, growing up to 3 metres (10 feet) in length.",
+                  "They are found on a number of different Indonesian Islands.",
+                  "Komodo dragons are carnivores (meat eaters) and can be very aggressive.",
+                  "What is a lizard? Lizards are part of a group of animals known as reptiles.",
+                  " They are most closely related to snakes.",
+                  " In fact, some lizards, called sheltopusiks, look like snakes because they have no legs! Many lizards today resemble the ancient reptiles of the dinosaur era.",
+                  " Their ancestors appeared on Earth over 200 million years ago.",
+                  "In general, lizards have a small head, short neck, and long body and tail.",
+                  " Unlike snakes, most lizards have moveable eyelids.",
+                  " There are currently over 4,675 lizard species, including iguanas, chameleons, geckos, Gila monsters, monitors, and skinks.",
+                  "Banded Knob-tailed gecko",
+                  "Geckos, like this banded-knob tailed gecko, have clear membrane shields over their eyes in lieu of eyelids.",
+                  "Most lizards have eyelids, just like we do, that clean and protect their eyes when they blink.",
+                  " But some lizards, like geckos, can’t blink! Instead, they have a clear membrane that shields their eyes from dirt or bright sun and use their tongue to clean their eyes.",
+                  " Many lizards, such as iguanas, can see in color.",
+                  " Their colorful body parts allow them to communicate with each other and help them tell which are male and which are female.",
+                  "Blue-tongued skink walking on grass",
+                  "Blue-tongued skink using his eponymous tongue to smell.",
+                  "Lizards smell stuff with their tongues! Just like snakes, a lizard sticks out its tongue to catch scent particles in the air and then pulls back its tongue and places those particles on the roof of its mouth, where there are special sensory cells.",
+                  " The lizard can use these scent “clues” to find food or a mate or to detect enemies.",
+                  "Lizards don’t have earflaps like mammals do.",
+                  " Instead, they have visible ear openings to catch sound, and their eardrums are just below the surface of their skin.",
+                  " Even so, lizards can’t hear as well as we do, but their hearing is better than that of snakes.",
+                  "Lizards have dry, scaly skin that does not grow with their bodies.",
+                  " Instead, most lizards shed, or molt, their old skin in large flakes to make way for the new skin growth underneath.",
+                  " The exception to this is with the alligator lizard, which may shed its skin in one piece, like a snake.",
+                  " The scales on lizards vary, depending on their habitat.",
+                  " Skinks have smooth scales so mud won’t cling to them; some lizard species have bony plates, called osteoderms, under their scales for added protection against rough terrain.",
+                  "Lizards are popular prey for many types of predators, from birds of prey to snakes and carnivorous mammals.",
+                  " Their camouflage and ability to stay still for hours helps keep them safe.",
+                  " Several types of lizards are able to escape from an enemy’s grasp by breaking off part of their own tail.",
+                  " The tail has a weak spot just for this purpose.",
+                  " If a predator grabs the lizard by its tail, the tail easily comes off.",
+                  " It can grow back over time, although the tail won’t look quite the same.",
+                  " Still, it’s better than being someone else’s dinner!",
+                  "Other lizards have different ways to stay safe.",
+                  " Horned lizards are able to squirt blood from tiny blood vessels in their eyes to scare away or confuse a predator.",
+                  " The armadillo lizard has sharp, spiky scales and can roll up into a tight ball to protect its soft belly from attack.",
+                  " The sungazer lizard has impressive spikes that cover its body, including the tail.",
+                  " The alligator lizard bites, thrashes about to get loose, or voids foul-smelling feces.",
+                  " The tropical girdled lizard darts into a crack, expands its body, and lodges itself in so tightly that a predator can’t remove it.",
+                  "Shingle-backed skink",
+                  "Which end is which? Shingle-backed skink showing off its tail.",
+                  "The shingle-backed skink is the reptile equivalent of Dr.",
+                  " Doolittle’s two-headed llama, the “push-me-pull-you” with its fat, wide tail that resembles the head.",
+                  " If confronted by a predator, the skink bends its body into a C shape, which confuses the predator because it appears as if the skink has two heads.",
+                  " The Australian frilled lizard has a “frill” of loose skin around its neck that can stick out when the lizard is frightened.",
+                  " This makes the lizard look much bigger than it really is, and a predator may decide to look for something smaller to eat.",
+                  " If that doesn’t work, the lizard runs away on its hind feet!",
+                  "HABITAT AND DIET",
+                  "A pair of sleepy Galapagos marine iguanas half submerged in a shallow tide pool",
+                  "Galapagos marine iguanas enjoy a nap in a shallow tide pool.",
+                  "Lizards can be found in every continent except Antarctica, and they live in all habitats except extremely cold areas and deep oceans.",
+                  " Most lizards live on the ground, but others can be found making their home in a tree, in a burrow, or in the water.",
+                  " Tree dwellers have special toes: long with sharp claws or short and wide.",
+                  " They often have a prehensile tail for grasping thin branches.",
+                  " Those that live in a burrow tend to have smaller legs, or none at all, to help them move underground more easily.",
+                  " Marine iguanas spend much of their lives underwater, although they come to shore to rest on rocks or a sandy beach.",
+                  " Desert dwellers, like the ground gecko, usually sleep during the day underneath the warm sand and then come out when the sun has gone down.",
+                  "Gila monster laying on rocky dirt",
+                  "Gila monsters and their cousins, beaded lizards, use their venom to subdue prey.",
+                  "Different lizard species eat different types of food.",
+                  " Some are predators, eating mammals, birds, and other reptiles.",
+                  " Others are mainly vegetarian, eating leaves, fruits, and flowers.",
+                  " Two are venomous: the Gila monster and the Mexican beaded lizard.",
+                  " Their venom comes from saliva glands in the jaw, and the lizards chew it into the victim.",
+                  " Caiman lizards are adept at eating snails and other shelled animals.",
+                  " Upon seizing a snail, the lizard raises its head and relaxes its grip, causing the snail to roll to the back of its mouth.",
+                  " It then bites down with flattened, molar-like teeth and cracks the shell.",
+                  " By alternating bites and rotating the snail with the tongue, the lizard completely removes the shell and pushes the pieces out of the mouth.",
+                  "Most lizards are insect eaters, grabbing crickets, flies, grasshoppers, and more with long, sticky tongues or quick bites.",
+                  " At the San Diego Zoo and San Diego Zoo Safari Park, our lizards are fed a variety of insects, worms, and meat products as well as fruits and vegetables, depending upon each species’ preference.",
+                  "FAMILY LIFE",
+                  "A pair of red-headed agama lizards rest on a large granite boulder",
+                  "Red-headed agama lizards",
+                  "Male lizards use a variety of methods to attract  a female's attention.",
+                  " They bob their head vigorously or display their brightest colors or best features.",
+                  " The green anole lizard inflates a rust-colored throat sack, called a dewlap, to win over the lady of his choice, sometimes keeping up this display for hours.",
+                  " Red-headed agamas are African lizards with brown skin.",
+                  " But when the male needs to make sure others see him, his head turns fiery red and his body and tail change to a bright, shiny blue.",
+                  " Other males may fight with each other until the weaker one gives up.",
+                  "Most female lizards lay soft, leathery eggs and then call it a day—they don’t stick around to protect the eggs from harm or keep them warm.",
+                  " Fortunately, the newly hatched lizards are able to take care of themselves right away, without the mother’s help.",
+                  " Of course, there are exceptions to soft eggs and lack of care in the lizard world!",
+                  "Baby Grand Cayman Blue iguana hatching from its egg.",
+                  "Baby Grand Cayman blue iguana hatching from its egg.",
+                  "The tokay gecko lays soft eggs that harden in the dry air and stick to the surface on which they were laid.",
+                  " The sandstone gecko lays eggs in rocky crevices, so these eggs have a tough cover.",
+                  " The Nile monitor lizard lays her eggs in termite mounds.",
+                  " The heat from the termites in the mound helps incubate the eggs.",
+                  " Some skink mothers return to the nest to warm their eggs, and some female skinks give birth to live young.",
+                  "No matter what the circumstances of their start in life, baby lizards look like tiny versions of their parents.",
+                  "The San Diego Zoo has had a variety of lizards for our guests to admire since our earliest days, when our collection included Gila monsters, iguanas, European legless lizards (sheltopusiks), and monitor lizards.",
+                  " Many of the exotic lizards we acquired in those early years were obtained by trading local specimens.",
+                  "Oftentimes members of the military brought animals to the Zoo during their trips abroad.",
+                  " In 1930, we were thrilled to receive a shipment of six “beautiful iguanas, by far the handsomest and largest specimens of this creature that the Zoo has ever had” from a lieutenant in the Marine Corps.",
+                  " An Australian water dragon was the first lizard to make the cover of our member magazine, ZOONOOZ, back in 1931.",
+                  " Several of our iguanas appeared in movies in the 1930s, making the jungle scenes in two Tarzan pictures and Treasure Island  look tropical and dangerous.",
+                  "Today, the Zoo is home to an amazing assortment of lizards, including red-headed and blue-headed agamas, bearded dragons, scheltopusiks, geckos, Gila monsters, skinks, caiman lizards, and Komodo dragons.",
+                  " We have had several breeding successes over the years, including the first captive hatching of Gila monster eggs in 1963, the first North American births of New Caledonian live-bearing geckos and emperor flat lizards in 2000, and the first successful breeding of Anegada Island iguanas in 2001.",
+                  " Also in 2000, the Zoo hatched our first-ever green tree monitor—and we have consistently hatched over 30 since then, making it the most successful green tree monitor program in the US.",
+                  "A satanic leaf-tailed gecko made the local news in January 2011 as the first official San Diego Zoo baby of 2011.",
+                  " The hatchling was also notable because we are one of only two zoos to breed this unusual species.",
+                  " Gecko breeding takes place behind the scenes in one of the reptile buildings.",
+                  " Keepers watch the behavior of the female as a clue to when eggs might be found.",
+                  " The eggs are placed in a plastic container of moist vermiculite and kept in the gecko’s enclosure to keep an eye on them.",
+                  "The Zoo's Reptile Walk features lizard species native to Southern California: the Panamint alligator lizard and giant horned lizard.",
+                  "The San Diego Zoo Safari Park is home to a Nile monitor in our Animal Care Center.",
+                  " Named Obedass, this adult weighs nearly 40 pounds (18 kilograms).",
+                  " With his good looks and impressive size, he causes quite a stir among our guests! Obedass arrived at the Safari Park in 2004 from a zoo in Illinois.",
+                  " His diet consists of mice, crawfish, and meat “sausages” made for zoo carnivores.",
+                  " A humidifier in his enclosure keeps Obedass’ skin in good condition, and he has special heating and lighting to keep him comfortable.",
+                  " In the Park’s Hidden Jungle crevasse, you’ll find the Mali uromastyx, banded velvet gecko, and giant leaf-tailed gecko.",
+                  " Griffin Reptile Conservation Center have succeeded in breeding the most critically endangered iguanas in the world, the Caribbean rock iguanas.",
+                  " We have been involved with Caribbean iguana conservation and recovery programs for almost two decades, establishing captive breeding facilities for five of the most endangered species on their respective home islands.",
+                  " To date, more than 700 Caribbean iguanas have been raised in these facilities and released.",
+                  " An initiative is underway to establish a large, centralized, multi-species facility for endangered iguanas on Puerto Rico.",
+                  "Closer to home, and in partnership with the U.",
+                  "S.",
+                  " Geological Survey, we have been monitoring the biological diversity of the Biodiversity Reserve at the Safari Park since 2002.",
+                  " This monitoring project provides significant insights into the population ecology of the native species living in the Reserve, including an abundance of native lizard species including whiptails, side-blotch lizards, western fence lizards, granite spiny lizards, western skinks, and Gilbert’s skinks.",
+                  " It is amazing how many lizard species are native to our own backyard here in Southern California!",
+                  "What can you do to help lizards in Southern California? Be water wise! Over watering our yards in San Diego attracts nonnative Argentine ants, which then displace the native Southern California ants, which then causes the now-endangered San Diego horned lizard to starve!",
+                  "Up to 50 years for some species",
+                  "Reproduction: Most lizards lay eggs, but in some species the eggs develop inside the mother",
+                  "Age of maturity: 18 months to 7 years, depending on species",
+                  "SIZE",
+                  "Length: Largest - Komodo dragon Varanus komodoensis, up to 10 feet (3 meters); smallest - dwarf gecko Sphaerodactylus ariasae and S.",
+                  " parthenopion, .",
+                  "6 inches (1.",
+                  "6 centimeters)",
+                  "Weight: Heaviest - Komodo dragon, up to 176 pounds (80 kilograms); lightest - dwarf gecko, .",
+                  "004 ounce (120 milligrams)",
+                  "FUN FACTS",
+                  "Some lizard species can store up to 60 percent of their body fat in their tail.",
+                  "Unlike other lizards, alligator lizards shed their skin in one piece, as snakes do.",
+                  "The secret of the gecko's sticky toes is inspiring new kinds of adhesives, including a biodegradable one for surgical use.",
+                  "To protect its feet from the hot sand, the sand lizard “dances” by lifting its legs up quickly, one at a time, or by resting its belly on the sand and lifting up all four legs at once.",
+                  "The Madagascan chameleon has a sticky-tipped tongue that it can shoot out farther than the length of its body.",
+                  "Yellow-rumped warbler with a bee in its beak sitting on a cattail in B.",
+                  "C.",
+                  "A young tamandua gazes at the camera with a wet nose.",
+
+                  "The face of a year-old Gray's monitor lizard climbing on a branch."];
